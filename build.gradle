@@ -13,6 +13,10 @@ buildscript {
         // in the individual module build.gradle files
     }
 }
+plugins {
+    //id 'org.jetbrains.kotlin.multiplatform' version '1.3.72' // or any other kotlin plugin
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.3.72'
+}
 
 allprojects {
     repositories {
@@ -22,5 +26,5 @@ allprojects {
 }
 
 task clean(type: Delete) {
-    delete rootProject.buildDir
+//    delete rootProject.buildDir
 }
