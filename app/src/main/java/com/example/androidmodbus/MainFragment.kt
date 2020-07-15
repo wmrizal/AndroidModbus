@@ -24,6 +24,7 @@ import com.example.androidmodbus.electricmeter.ReadElectricMeterDatabase
 import java.io.File
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
+import java.time.Instant
 import java.time.ZonedDateTime
 import javax.net.ssl.*
 
@@ -53,7 +54,7 @@ class MainFragment : Fragment() {
             val values = ContentValues().apply {
                 put(MeterReaderContract.MeterReadEntry.COLUMN_NAME_MACHINE_ID, 1)
                 put(MeterReaderContract.MeterReadEntry.COLUMN_NAME_METER_VALUE, 100)
-                put(MeterReaderContract.MeterReadEntry.COLUMN_NAME_TIMESTAMP, ZonedDateTime.now().toString())
+                put(MeterReaderContract.MeterReadEntry.COLUMN_NAME_TIMESTAMP, Instant.now().toEpochMilli())
             }
 
     // Insert the new row, returning the primary key value of the new row

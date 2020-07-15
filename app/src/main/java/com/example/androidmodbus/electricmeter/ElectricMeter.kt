@@ -20,6 +20,7 @@ import java.time.ZonedDateTime
 import kotlinx.serialization.internal.*
 import kotlinx.serialization.json.JsonInput
 import kotlinx.serialization.json.JsonObject
+import java.time.Instant
 
 @Serializer(forClass = ZonedDateTime::class)
 object ZonedDateTimeSerializer: KSerializer<ZonedDateTime> {
@@ -37,10 +38,26 @@ object ZonedDateTimeSerializer: KSerializer<ZonedDateTime> {
     }
 }
 
+@Serializer(forClass = Instant::class)
+object InstantSerializer: KSerializer<Instant> {
+    //private val df: DateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS")
+
+    override val descriptor: SerialDescriptor =
+        PrimitiveDescriptor("WithCustomDefault", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, obj: Instant) {
+        encoder.encodeString(obj.toString())
+    }
+
+    override fun deserialize(decoder: Decoder): Instant {
+        return Instant.parse(decoder.decodeString())
+    }
+}
+
 @Serializable
 data class ElectricMeterReading(var machineId : Int? = null,
                                 @Serializable(with=ZonedDateTimeSerializer::class)
-                                var timestamp : ZonedDateTime? = null,
+                                var timestamp : Instant? = null,
                                 var meterValue : Int? = null) {
 }
 
@@ -57,7 +74,7 @@ object MeterReaderContract {
         "CREATE TABLE IF NOT EXISTS ${MeterReadEntry.TABLE_NAME} (" +
                 "${BaseColumns._ID} INTEGER PRIMARY KEY," +
                 "${MeterReadEntry.COLUMN_NAME_MACHINE_ID} INTEGER," +
-                "${MeterReadEntry.COLUMN_NAME_TIMESTAMP} TEXT," +
+                "${MeterReadEntry.COLUMN_NAME_TIMESTAMP} INTEGER," +
                 "${MeterReadEntry.COLUMN_NAME_METER_VALUE} INTEGER) "
 
     private const val SQL_DELETE_ENTRIES = "DROP TABLE IF EXISTS ${MeterReadEntry.TABLE_NAME}"
@@ -77,7 +94,7 @@ object MeterReaderContract {
         }
         companion object {
             // If you change the database schema, you must increment the database version.
-            const val DATABASE_VERSION = 1
+            const val DATABASE_VERSION = 2
             const val DATABASE_NAME = "MeterReader.db"
         }
     }
